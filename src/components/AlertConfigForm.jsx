@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { ALERT_TYPES } from '../types';
+import InputWithUnits from './InputWithUnits';
 
 export default function AlertConfigForm({ coin, watchlistItem, isOpen, onClose }) {
   const { createAlert, user } = useApp();
   const [alerts, setAlerts] = useState([
     { type: ALERT_TYPES.PRICE_ABOVE, value: '', enabled: false },
     { type: ALERT_TYPES.PRICE_BELOW, value: '', enabled: false },
-    { type: ALERT_TYPES.PERCENTAGE_CHANGE, value: '', enabled: false }
+    { type: ALERT_TYPES.PERCENTAGE_CHANGE, value: '', enabled: false },
+    { type: ALERT_TYPES.VOLUME_SPIKE, value: '2.0', enabled: false }
   ]);
 
   if (!isOpen) return null;
@@ -51,6 +53,8 @@ export default function AlertConfigForm({ coin, watchlistItem, isOpen, onClose }
         return 'Price Below';
       case ALERT_TYPES.PERCENTAGE_CHANGE:
         return '24h Change Above';
+      case ALERT_TYPES.VOLUME_SPIKE:
+        return 'Volume Spike';
       default:
         return type;
     }
@@ -63,6 +67,8 @@ export default function AlertConfigForm({ coin, watchlistItem, isOpen, onClose }
         return `e.g. ${coin.current_price.toFixed(2)}`;
       case ALERT_TYPES.PERCENTAGE_CHANGE:
         return 'e.g. 5 (for 5%)';
+      case ALERT_TYPES.VOLUME_SPIKE:
+        return 'e.g. 2.0 (2x average)';
       default:
         return '';
     }
@@ -75,6 +81,8 @@ export default function AlertConfigForm({ coin, watchlistItem, isOpen, onClose }
         return '$';
       case ALERT_TYPES.PERCENTAGE_CHANGE:
         return '%';
+      case ALERT_TYPES.VOLUME_SPIKE:
+        return 'x';
       default:
         return '';
     }
@@ -132,22 +140,15 @@ export default function AlertConfigForm({ coin, watchlistItem, isOpen, onClose }
                 
                 {alert.enabled && (
                   <div className="ml-6">
-                    <div className="relative">
-                      {getAlertUnit(alert.type) && (
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary">
-                          {getAlertUnit(alert.type)}
-                        </span>
-                      )}
-                      <input
-                        type="number"
-                        step="any"
-                        value={alert.value}
-                        onChange={(e) => handleAlertChange(index, 'value', e.target.value)}
-                        placeholder={getAlertPlaceholder(alert.type)}
-                        className={`w-full ${getAlertUnit(alert.type) ? 'pl-6' : 'pl-3'} pr-3 py-2 bg-bg border border-surface rounded-md text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent`}
-                        required
-                      />
-                    </div>
+                    <InputWithUnits
+                      type="number"
+                      step="any"
+                      value={alert.value}
+                      onChange={(e) => handleAlertChange(index, 'value', e.target.value)}
+                      placeholder={getAlertPlaceholder(alert.type)}
+                      unit={getAlertUnit(alert.type)}
+                      required
+                    />
                   </div>
                 )}
               </div>
