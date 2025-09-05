@@ -257,6 +257,18 @@ export function AppProvider({ children }) {
               message = `24h change: ${coin.price_change_percentage_24h.toFixed(2)}% (target: ${alert.triggerValue}%)`;
             }
             break;
+          case 'volume_spike':
+            // For volume spike, we need to check historical data
+            try {
+              const indicators = await cryptoAPI.getTechnicalIndicators(coin.id);
+              if (indicators && indicators.volumeSpike) {
+                shouldTrigger = true;
+                message = `Volume spike detected (${alert.triggerValue}x threshold)`;
+              }
+            } catch (error) {
+              console.error('Volume spike check error:', error);
+            }
+            break;
         }
 
         if (shouldTrigger) {

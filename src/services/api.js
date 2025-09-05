@@ -90,6 +90,44 @@ class CryptoAPI {
     const rs = avgGain / avgLoss;
     return 100 - (100 / (1 + rs));
   }
+
+  // Get historical data for technical indicators
+  async getCoinHistory(coinId, days = 7) {
+    const url = `${COINGECKO_BASE_URL}/coins/${coinId}/market_chart?vs_currency=usd&days=${days}&interval=hourly`;
+    return this.fetchWithCache(url);
+  }
+
+  // Calculate volume spike detection
+  calculateVolumeSpike(volumes, threshold = 2.0) {
+    if (volumes.length < 2) return false;
+    
+    const currentVolume = volumes[volumes.length - 1];
+    const avgVolume = volumes.slice(0, -1).reduce((a, b) => a + b, 0) / (volumes.length - 1);
+    
+    return currentVolume >= (avgVolume * threshold);
+  }
+
+  // Get technical indicators for a coin
+  async getTechnicalIndicators(coinId) {
+    try {
+      const history = await this.getCoinHistory(coinId, 30);
+      const prices = history.prices.map(p => p[1]);
+      const volumes = history.total_volumes.map(v => v[1]);
+      
+      return {
+        sma20: this.calculateSMA(prices, 20),
+        sma50: this.calculateSMA(prices, 50),
+        rsi: this.calculateRSI(prices),
+        volumeSpike: this.calculateVolumeSpike(volumes),
+        currentPrice: prices[prices.length - 1],
+        priceAboveSMA20: prices[prices.length - 1] > this.calculateSMA(prices, 20),
+        priceAboveSMA50: prices[prices.length - 1] > this.calculateSMA(prices, 50)
+      };
+    } catch (error) {
+      console.error('Technical indicators error:', error);
+      return null;
+    }
+  }
 }
 
 export const cryptoAPI = new CryptoAPI();

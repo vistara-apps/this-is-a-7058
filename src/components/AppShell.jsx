@@ -1,9 +1,11 @@
-import React from 'react';
-import { Bell, TrendingUp, Settings, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, TrendingUp, Settings as SettingsIcon, Star } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import Settings from './Settings';
 
 export default function AppShell({ children }) {
   const { user, alerts, error, clearError } = useApp();
+  const [showSettings, setShowSettings] = useState(false);
   
   const activeAlerts = alerts.filter(alert => alert.status === 'active').length;
 
@@ -45,8 +47,11 @@ export default function AppShell({ children }) {
               </div>
 
               {/* Settings */}
-              <button className="p-2 hover:bg-bg rounded-md transition-colors">
-                <Settings className="w-5 h-5 text-text-secondary" />
+              <button 
+                onClick={() => setShowSettings(true)}
+                className="p-2 hover:bg-bg rounded-md transition-colors"
+              >
+                <SettingsIcon className="w-5 h-5 text-text-secondary" />
               </button>
             </div>
           </div>
@@ -94,6 +99,12 @@ export default function AppShell({ children }) {
           </div>
         </div>
       </footer>
+
+      {/* Settings Modal */}
+      <Settings 
+        isOpen={showSettings} 
+        onClose={() => setShowSettings(false)} 
+      />
     </div>
   );
 }

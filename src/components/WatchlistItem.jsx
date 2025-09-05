@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { TrendingUp, TrendingDown, Bell, BellOff, Trash2, Settings } from 'lucide-react';
+import { TrendingUp, TrendingDown, Bell, BellOff, Trash2, Settings, Activity } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import AlertConfigForm from './AlertConfigForm';
+import TechnicalIndicators from './TechnicalIndicators';
 
 export default function WatchlistItem({ item, coinData }) {
   const { removeFromWatchlist } = useApp();
   const [showAlertConfig, setShowAlertConfig] = useState(false);
+  const [showIndicators, setShowIndicators] = useState(false);
 
   if (!coinData) return null;
 
@@ -48,6 +50,14 @@ export default function WatchlistItem({ item, coinData }) {
           </div>
           
           <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setShowIndicators(!showIndicators)}
+              className="p-1 hover:bg-accent hover:text-white rounded transition-colors"
+              title="Technical indicators"
+            >
+              <Activity className="w-4 h-4" />
+            </button>
+            
             <button
               onClick={() => setShowAlertConfig(true)}
               className="p-1 hover:bg-primary hover:text-white rounded transition-colors"
@@ -132,6 +142,16 @@ export default function WatchlistItem({ item, coinData }) {
                 </span>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Technical Indicators */}
+        {showIndicators && (
+          <div className="mt-4 pt-4 border-t border-surface">
+            <TechnicalIndicators 
+              coinId={coinData.id} 
+              coinSymbol={coinData.symbol} 
+            />
           </div>
         )}
       </div>
