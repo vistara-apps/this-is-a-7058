@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 210 80% 50%;
+    --accent: 140 60% 45%;
+    --bg: 210 30% 10%;
+    --surface: 210 30% 15%;
+    --text-primary: 0 0% 95%;
+    --text-secondary: 0 0% 70%;
+    --positive: 110 60% 45%;
+    --negative: 0 70% 50%;
+  }
+  
+  * {
+    border-color: hsl(var(--surface));
+  }
+  
+  body {
+    background-color: hsl(var(--bg));
+    color: hsl(var(--text-primary));
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded-md hover:opacity-90 transition-opacity;
+  }
+  
+  .btn-secondary {
+    @apply bg-surface text-text-primary px-4 py-2 rounded-md hover:bg-opacity-80 transition-colors;
+  }
+  
+  .card {
+    @apply bg-surface rounded-lg p-4 shadow-card;
+  }
+  
+  .card-elevated {
+    @apply bg-surface rounded-lg p-6 shadow-card border border-surface;
+  }
+}
